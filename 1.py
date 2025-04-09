@@ -16,6 +16,7 @@
 # nZW9knJwIDAQAB
 # -----END PUBLIC KEY-----
 
+
 import requests
 import json
 from Crypto.Cipher import DES
@@ -35,10 +36,7 @@ import re
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 import urllib3
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-
 def AR_SHADOW_DES_encrypt(plaintext, key):
     key_bytes = key.encode("utf-8")
     plaintext_bytes = plaintext.encode("utf-8")
@@ -46,22 +44,16 @@ def AR_SHADOW_DES_encrypt(plaintext, key):
     cipher = DES.new(key_bytes, DES.MODE_ECB)
     ciphertext = cipher.encrypt(padded_plaintext)
     return b64encode(ciphertext).decode("utf-8")
-
-
 def AR_SHADOW_Base64Url(base64_string):
     if not base64_string:
         return ''
     base64number = base64_string.replace('+', '-')
     base64number = re.sub(r'/', '_', base64number)
     return base64number
-
-
 def generate_random_string():
     characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     random_string = ''.join(random.choice(characters) for _ in range(8))
     return random_string
-
-
 def get_crc_and_right_shift(data):
     encoded_s = data.encode()
     # 假设value是你要处理的数据
@@ -70,12 +62,8 @@ def get_crc_and_right_shift(data):
     # 右移操作，Python中不需要手动做这个，因为crc32的结果已经是32位无符号整数
     shifted_crc = crc >> 0  # Python的位移操作自动忽略高位溢出
     return shifted_crc
-
-
 def pad_start_zero(dec_number):
     return str(int(dec_number)).zfill(16)
-
-
 def ar_show_doencypt(text):
     with open("rsa.public.pem") as f:
         public_key = f.read()
@@ -88,40 +76,30 @@ def ar_show_doencypt(text):
     encrypt_data = rsa.encrypt(text.encode())
     # (2) base64编码
     base64_encrypt_data = base64.b64encode(encrypt_data).decode()
-    return base64_encrypt_data
-
-
-def combined_str(key, num, stringpadding):
+    return  base64_encrypt_data
+def combined_str(key,num,stringpadding):
     combined_strs = f"{key}{num}|{stringpadding}|"
     return combined_strs
-
-
-def com_str(str1, str2):
-    string = "".join([str1, str2])
+def com_str(str1,str2):
+    string="".join([str1, str2])
     return string
-
-
 def encrypt_des(data, key):
-    key_bytes = key.encode('utf-8')
-    data_bytes = data.encode('utf-8')
-    cipher = DES.new(key_bytes, DES.MODE_ECB)
-    padded_data = pad(data_bytes, 8)
-    encrypted_data = cipher.encrypt(padded_data)
-    return encrypted_data
-
-
+  key_bytes = key.encode('utf-8')
+  data_bytes = data.encode('utf-8')
+  cipher = DES.new(key_bytes, DES.MODE_ECB)
+  padded_data = pad(data_bytes, 8)
+  encrypted_data = cipher.encrypt(padded_data)
+  return encrypted_data
 def fet_ssign():
     datatims = str(int(time.time() * 1000))
     argument = {
-        "0": f"1001035_{datatims}",
-        "1": "W7ZEgfnv"
+      "0":f"1001035_{datatims}",
+      "1": "W7ZEgfnv"
     }
     encrypted_data = encrypt_des(argument["0"], argument["1"])
     ssign = base64.b64encode(encrypted_data).decode('utf-8')
     return ssign
-
-
-def getdoctnum_args(docName, token):
+def getdoctnum_args(docName,token):
     ssign = fet_ssign()
     headers = {
         "Accept-Language": "zh-CN,zh;q=0.9",
@@ -153,33 +131,31 @@ def getdoctnum_args(docName, token):
     }
     data = json.dumps(data, separators=(',', ':'))
     response = requests.post(url, headers=headers, data=data)
-    doct_list = response.json()
+    doct_list=response.json()
     # print(doct_list,type(doct_list))
-    doct_args = {}
-    docInfoResultList = doct_list['result']['docInfoResultList'][0]
-    deptName = docInfoResultList['deptName']
-    docId = docInfoResultList['docId']
-    deptId = docInfoResultList['deptId']
-    docPhoto = docInfoResultList['docPhoto']
-    docTitle = docInfoResultList['docTitle']
-    hosName = docInfoResultList['hosName']
-    hosId = docInfoResultList['hosId']
+    doct_args={}
+    docInfoResultList=doct_list['result']['docInfoResultList'][0]
+    deptName=docInfoResultList['deptName']
+    docId=docInfoResultList['docId']
+    deptId=docInfoResultList['deptId']
+    docPhoto=docInfoResultList['docPhoto']
+    docTitle=docInfoResultList['docTitle']
+    hosName=docInfoResultList['hosName']
+    hosId=docInfoResultList['hosId']
     doct_args.update({
-        "docId": docId,
-        "docName": str(docName),
-        "docTitle": docTitle,
-        "docPhoto": docPhoto,
-        "deptId": deptId,
-        "hosId": hosId,
-        "hosName": hosName
+            "docId": docId,
+            "docName": str(docName),
+            "docTitle": docTitle,
+            "docPhoto":docPhoto,
+            "deptId": deptId,
+            "hosId":hosId,
+            "hosName":hosName
     })
     return doct_args
-
-
 def get_queryparamid():
     datatims = str(int(time.time() * 1000))
     numberlist = f'0000000000000000000{datatims}||||3e37551033725f99e77bd868656e84b2|{datatims}||7$0.0.0.0$1$0$/regSch/deptSch$5oyJ5pel5pyf5oyC5Y+3$2$0$0$-$aHR0cHM6Ly9uZXRwaHNzei5laGVyZW4uY29t$false||7|1|0|||f51bb482c660d0eeadd1f058058a2b35|'
-    key = generate_random_string()
+    key=generate_random_string()
     desbase64string02 = AR_SHADOW_DES_encrypt(numberlist, key)
     baselist02 = AR_SHADOW_Base64Url(desbase64string02)
     # print(baselist02)
@@ -192,9 +168,8 @@ def get_queryparamid():
     queryparamid = com_str(baselist01, baselist02)
     return queryparamid
 
-
-def get_docSch(doct_args, queryparamid, token):
-    args = {
+def get_docSch(doct_args,queryparamid,token):
+    args= {
         "type": "order",
         "visitingArea": "",
         "clinicalType": "1",
@@ -202,7 +177,7 @@ def get_docSch(doct_args, queryparamid, token):
         "sysCode": "1001035"
     }
     args.update(doct_args)
-    ssign = fet_ssign()
+    ssign=fet_ssign()
     headers = {
         "Accept-Language": "zh-CN,zh;q=0.9",
         "Connection": "keep-alive",
@@ -216,7 +191,7 @@ def get_docSch(doct_args, queryparamid, token):
         "content-type": "application/json",
         "hrtoken": token,
         "phsid": "81681688",
-        "phssign": ssign,
+        "phssign":ssign,
         "sec-ch-ua": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"",
         "sec-ch-ua-mobile": "?0",
         "sec-ch-ua-platform": "\"Windows\""
@@ -226,7 +201,7 @@ def get_docSch(doct_args, queryparamid, token):
         "arshadowurlqueryparamid": queryparamid
     }
     data = {
-        "args": args,
+        "args":args,
         "token": token
     }
     data = json.dumps(data, separators=(',', ':'))
@@ -236,8 +211,6 @@ def get_docSch(doct_args, queryparamid, token):
         dataList = data['result']['dataList']
 
         return dataList
-
-
 def Data_Processing(dataList):
     clinical_list = []
     clinical_list02 = []
@@ -262,34 +235,34 @@ def Data_Processing(dataList):
                 "commitOffset": 0
             }
             numRemain = ampmlist['numRemain']
-            schDate = ampmlist['schDate']
+            schDate=ampmlist['schDate']
             schId = ampmlist['schId']
             deptId = ampmlist['deptId']
             enData = ampmlist['enData']
             ampm = ampmlist['ampm']
-            docId = ampmlist['docId']
+            docId=ampmlist['docId']
             categorName = ampmlist["categorName"]
             clinicalType = ampmlist["clinicalType"]
             docName = ampmlist["docName"]
-            deptName = ampmlist["deptName"]
+            deptName=ampmlist["deptName"]
             hosId = ampmlist["hosId"]
             schQukCategor = ampmlist["schQukCategor"]
-            hosName = ampmlist["hosName"]
-            fee = ampmlist["fee"]
-            categor = ampmlist["categor"]
+            hosName=ampmlist["hosName"]
+            fee=ampmlist["fee"]
+            categor=ampmlist["categor"]
             # 这一句是条件语句，是可以修改的，建议根据是自己的实际情况选择时间
-            if 0 < int(numRemain) < 40 and schDate == "2025-01-18":
+            if 0 < int(numRemain) < 40 and schDate=="2025-01-18":
                 args.update({
-                    "numRemain": numRemain,
+                    "numRemain":numRemain,
                     "sysCode": "1001035",
-                    "docId": docId,
+                    "docId":docId,
                     "schDate": schDate,
                     "ampm": ampm,
                     "deptId": deptId,
                     "hosId": hosId,
                     "schId": schId,
                     "enData": enData,
-                    "categor": categor
+                    "categor":categor
                 })
                 args02.update({
                     "clinicalType": clinicalType,
@@ -299,21 +272,19 @@ def Data_Processing(dataList):
                     "deptId": deptId,
                     "resDate": schDate,
                     "schId": schId,
-                    "docName": docName,
-                    "schQukCategor": schQukCategor,
-                    "fee": fee,
-                    "deptName": deptName,
-                    "hosName": hosName,
-                    "docId": docId
+                    "docName":docName,
+                    "schQukCategor":schQukCategor,
+                    "fee":fee,
+                    "deptName":deptName,
+                    "hosName":hosName,
+                    "docId":docId
 
                 })
                 clinical_list.append(args)
                 clinical_list02.append(args02)
-    return clinical_list[0], clinical_list02[0]
-
-
+    return clinical_list[0],clinical_list02[0]
 def get_patienId(token):
-    ssign = fet_ssign()
+    ssign=fet_ssign()
     headers = {
         "Accept-Language": "zh-CN,zh;q=0.9",
         "Connection": "keep-alive",
@@ -325,14 +296,14 @@ def get_patienId(token):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         "accept": "*/*",
         "content-type": "application/json",
-        "hrtoken": token,
+        "hrtoken":token,
         "phsid": "81681688",
         "phssign": ssign,
         "sec-ch-ua": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"",
         "sec-ch-ua-mobile": "?0",
         "sec-ch-ua-platform": "\"Windows\""
     }
-    url = "https://netphssz.eheren.com/phs-base/relevantPatient/getPatCardList"
+    url = "；"
     data = {
         "args": {
             "sysCode": "1001035"
@@ -341,13 +312,11 @@ def get_patienId(token):
     }
     data = json.dumps(data, separators=(',', ':'))
     response = requests.post(url, headers=headers, data=data)
-    reslt = response.json()
-    patienId = reslt['result'][0]['patienId']
+    reslt=response.json()
+    patienId=reslt['result'][0]['patienId']
     return patienId
-
-
-def get_numsource(queryparamid, args, token):
-    ssign = fet_ssign()
+def get_numsource(queryparamid,args,token):
+    ssign=fet_ssign()
     headers = {
         "Accept-Language": "zh-CN,zh;q=0.9",
         "Connection": "keep-alive",
@@ -371,41 +340,38 @@ def get_numsource(queryparamid, args, token):
         "arshadowurlqueryparamid": queryparamid
     }
     data = {
-        "args": args,
+        "args":args,
 
         "token": token
     }
     data = json.dumps(data, separators=(',', ':'))
-    response = requests.post(url, headers=headers, params=params, data=data, verify=False)
-    preser = response.json()
+    response = requests.post(url, headers=headers, params=params, data=data,verify=False)
+    preser= response.json()
     # print(preser)
-    informantlist = preser['result']
+    informantlist=preser['result']
     # print(informantlist)
-    infornumber_list = []
+    infornumber_list=[]
     for endatalist in informantlist:
         infornumber = {}
-        enData = endatalist['enData']
-        timeDesc = endatalist['timeDesc']
-        disNo = endatalist["disNo"]
+        enData=endatalist['enData']
+        timeDesc=endatalist['timeDesc']
+        disNo=endatalist["disNo"]
         # 这个条件是自己加的额。。一定要加不然不能快速定位到票
-        if timeDesc == '10:30-11:00':
+        if timeDesc=='10:30-11:00':
             infornumber.update({
-                "enData": enData,
-                "timeDesc": timeDesc,
-                "disNo": disNo,
-                "appointmentNumber": disNo
+                      "enData": enData,
+                      "timeDesc": timeDesc,
+                      "disNo": disNo,
+                      "appointmentNumber":disNo
 
-            })
+                  })
             infornumber_list.append(infornumber)
     return infornumber_list[0]
-
-
-def get_args(args01, args02):
+def get_args(args01,args02):
     args = {**args01, **args02}
     return args
 
-
-def get_mkapt(args, token, patienId):
+def get_mkapt(args,token,patienId):
     ssign = fet_ssign()
     args['patientId'] = patienId
 
@@ -429,50 +395,47 @@ def get_mkapt(args, token, patienId):
     }
     url = "https://netphssz.eheren.com/phs-reg/regSch/mkApt"
     data = {
-        "args": args,
+        "args":args,
         "token": token
     }
     data = json.dumps(data, separators=(',', ':'))
-    response = requests.post(url, headers=headers, data=data, verify=False)
+    response = requests.post(url, headers=headers, data=data,verify=False)
     return response.json()
 
-
 def main(token, docName):
-    # 每个账户在注册或者登录_的时候，都会返回一个token值
-    # docName就是医生的名字
-    doct_args = getdoctnum_args(docName, token)
-    # 第一步是得到医生的args一遍于第二步查询医生的坐班时间
-    # print(doct_args)
-    queryparamid = get_queryparamid()
-    # print(queryparamid)
-    # 医生值班请求发出前需要一个参数的破解
-    dataList = get_docSch(doct_args, queryparamid, token)
+      # 每个账户在注册或者登录_的时候，都会返回一个token值
+      # docName就是医生的名字
+      doct_args=getdoctnum_args(docName,token)
+      # 第一步是得到医生的args一遍于第二步查询医生的坐班时间
+      # print(doct_args)
+      queryparamid = get_queryparamid()
+      # print(queryparamid)
+      # 医生值班请求发出前需要一个参数的破解
+      dataList=get_docSch(doct_args,queryparamid,token)
 
-    # 从而得到医生的坐班时间返回
-    # print(dataList)
-    args, args02 = Data_Processing(dataList)
-    # print(args,args02)
-    # # 这一步也就是在为查票的余额和预定票做准备的参数环节有条件判断语句,
-    # #  int(numRemain) > 0 and schDate == '2025-01-02' and schId == "20201225000000000062":
-    # # # 判断哪一天的号码,是否有号源,上午还是下午,条件选择就在这一个函数里，，所以得看具体情况具体分析，可以在里面写条件，我先做一个大众版的
-    # # 打印出所有有号的信息，将它们放进一个数组里供查阅，但是一般的抢票环节都是已经锁定了医生，几月几号，什么时间的，
-    # # 所以可以在if条件里面加条件筛选出最终的抢票参数以便后面使用
-    # 我选择了列表输出，然后从中选出第一个,也可以根据if判断直接定位就不用列表输出了
-    args01 = get_numsource(queryparamid, args, token)
-    # print(args01)
-    #
-    # # # 在这一步我做了患者的信息提取一遍后续抢票使用
+      # 从而得到医生的坐班时间返回
+      print(dataList)
+      args,args02=Data_Processing(dataList)
+      print(args,args02)
+      # # 这一步也就是在为查票的余额和预定票做准备的参数环节有条件判断语句,
+      # #  int(numRemain) > 0 and schDate == '2025-01-02' and schId == "20201225000000000062":
+      # # # 判断哪一天的号码,是否有号源,上午还是下午,条件选择就在这一个函数里，，所以得看具体情况具体分析，可以在里面写条件，我先做一个大众版的
+      # # 打印出所有有号的信息，将它们放进一个数组里供查阅，但是一般的抢票环节都是已经锁定了医生，几月几号，什么时间的，
+      # # 所以可以在if条件里面加条件筛选出最终的抢票参数以便后面使用
+      # 我选择了列表输出，然后从中选出第一个,也可以根据if判断直接定位就不用列表输出了
+      args01=get_numsource(queryparamid,args,token)
+      # print(args01)
+      #
+      # # # 在这一步我做了患者的信息提取一遍后续抢票使用
 
-    patienId = get_patienId(token)
-    args = get_args(args01, args02)
+      patienId = get_patienId(token)
+      args=get_args(args01,args02)
 
-    time.sleep(3)
+      time.sleep(3)
 
-    lastresult = get_mkapt(args, token, patienId)
-    print(lastresult)
-
-
+      lastresult=get_mkapt(args,token,patienId)
+      print(lastresult)
 if __name__ == "__main__":
-    token = "10f0811bdaaa4753c80688d1b995dd0d4ac9f3ea34c6002bbcd2e94a742ae24e366e9c0326cac46840272b8955c1f1fdd736fb0e423d3af2c03edf6ee640bc683e18e2bfed44128d23202b5724cb0758d0d462e19b44b96a9602e149aa54acd7d2f69fcc7b326bbea7010dec631f7dab867fc0389bc9b5273f5cf1be5e309bbfbd8e6973d2addec9b9292bd4b51fefb052764db6a4c35dbf180d281ddd464d2a98764342d9d407e3459277272f3a4850f43948fa4240d000a94b322f97a3993d51f3e892bbb010a5346e82c4f8144a73dbcf07064eaf852944e4e575490ca474500e8ebf452fecff3f578dac2c31593d3c028d281e5fedb722a5939cea080850466ba0d74bacf9f5a7616add5f27fd18c2e0dd20ded5a31b170a68d6def7b5edd0831a34e23c962ab96e3d844d95b2f4eb1c075fbd67491b"
-    docName = "谭城"
+    token =""
+    docName= ""
     main(token, docName)
